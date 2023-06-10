@@ -1,5 +1,4 @@
-import { useDispatch } from "react-redux";
-import { reactionAdded } from "./postSlice";
+import { useAddReactionMutation } from "./postSlice";
 const reactionEmoji = {
   thumbsUp: "th",
   wow: "ww",
@@ -9,16 +8,21 @@ const reactionEmoji = {
 };
 
 function ReactionButtons({ post }) {
-  const dispatch = useDispatch();
+  const [addReaction] = useAddReactionMutation();
   const reactionButtons = Object.entries(reactionEmoji).map(([name, emoji]) => {
     return (
       <button
         key={name}
         type="button"
         className=""
-        onClick={() =>
-          dispatch(reactionAdded({ postId: post.id, reaction: name }))
-        }
+        onClick={() => {
+          const newValue = post.reactions[name] + 1;
+
+          addReaction({
+            postId: post.id,
+            reactions: { ...post.reactions, [name]: newValue },
+          });
+        }}
       >
         {emoji} {post.reactions[name]}
       </button>
